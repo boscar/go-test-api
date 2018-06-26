@@ -3,7 +3,6 @@ package store
 import (
 	"fmt"
 	"go-test-api/config"
-	"log"
 
 	mgo "gopkg.in/mgo.v2"
 )
@@ -29,10 +28,11 @@ func (r Repository) GetProducts() Products {
 
 	defer session.Close()
 
-	c := session.DB(r.Config.DatabaseName).C(STORE_COLLECTION)
+	collection := session.DB(r.Config.DatabaseName).C(STORE_COLLECTION)
 	results := Products{}
 
-	if err := c.Find(nil).All(&results); err != nil {
+	err = collection.Find(nil).All(&results)
+	if err != nil {
 		fmt.Println("Failed to write results:", err)
 	}
 
@@ -42,13 +42,20 @@ func (r Repository) GetProducts() Products {
 // AddProduct adds a Product in the DB
 func (r Repository) AddProduct(product Product) bool {
 	session, err := mgo.Dial(r.Config.ConnectionString)
+
+	if err != nil {
+		fmt.Println("Failed to establish connection to Mongo server:", err)
+		return false
+	}
+
 	defer session.Close()
 
 	productID++
 	product.ID = productID
-	session.DB(r.Config.DatabaseName).C(STORE_COLLECTION).Insert(product)
+
+	err = session.DB(r.Config.DatabaseName).C(STORE_COLLECTION).Insert(product)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Failed to insert product:", err)
 		return false
 	}
 

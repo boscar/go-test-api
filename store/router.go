@@ -54,13 +54,13 @@ func CreateRouter(configuration config.Configuration) *mux.Router {
 	}
 
 	router := mux.NewRouter().StrictSlash(true)
-	initRoutes(router, routes)
+	initRoutes(router, &routes)
 
 	return router
 }
 
-func initRoutes(router *mux.Router, routes []Route) {
-	for _, route := range routes {
+func initRoutes(router *mux.Router, routes *Routes) {
+	for _, route := range *routes {
 		log.Println(route.Name)
 
 		router.

@@ -2,6 +2,7 @@ package store
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -21,33 +22,48 @@ type Controller struct {
 /*AuthenticationMiddleware ...
 Middleware handler to handle all requests for authentication */
 func AuthenticationMiddleware(next http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		authorizationHeader := req.Header.Get("authorization")
-		if authorizationHeader != "" {
-			bearerToken := strings.Split(authorizationHeader, " ")
-			if len(bearerToken) == 2 {
-				token, error := jwt.Parse(bearerToken[1], func(token *jwt.Token) (interface{}, error) {
-					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-						return nil, fmt.Errorf("There was an error")
-					}
-					return []byte("secret"), nil
-				})
-				if error != nil {
-					json.NewEncoder(w).Encode(Exception{Message: error.Error()})
-					return
-				}
-				if token.Valid {
-					log.Println("TOKEN WAS VALID")
-					context.Set(req, "decoded", token.Claims)
-					next(w, req)
-				} else {
-					json.NewEncoder(w).Encode(Exception{Message: "Invalid authorization token"})
-				}
-			}
+	return http.HandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+		authorizationHeader := request.Header.Get("authorization")
+
+		if authorizationHeader == "" {
+			json.NewEncoder(responseWriter).Encode(Exception{Message: "An authorization header is required."})
+			return
+		}
+
+		bearerToken := strings.Split(authorizationHeader, " ")
+
+		if len(bearerToken) != 2 {
+			json.NewEncoder(responseWriter).Encode(Exception{Message: "Invalid authorization header format."})
+			return
+		}
+
+		claims, error := getTokenClaims(&bearerToken[1])
+
+		if error == nil {
+			log.Println("TOKEN WAS VALID")
+			context.Set(request, "decoded", claims)
+			next(responseWriter, request)
 		} else {
-			json.NewEncoder(w).Encode(Exception{Message: "An authorization header is required"})
+			json.NewEncoder(responseWriter).Encode(Exception{Message: error.Error()})
 		}
 	})
+}
+
+func getTokenClaims(tokenString *string) (jwt.Claims, error) {
+	token, error := jwt.Parse(*tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("There was an error")
+		}
+		return []byte("secret"), nil
+	})
+	if error != nil {
+		return nil, error
+	}
+	if token.Valid {
+		return token.Claims, nil
+	}
+	error = errors.New("Invalid authorization token")
+	return nil, error
 }
 
 //GetToken ... Get Authentication token GET /
@@ -71,10 +87,9 @@ func (c *Controller) GetToken(w http.ResponseWriter, req *http.Request) {
 
 // Index GET /
 func (c *Controller) Index(w http.ResponseWriter, r *http.Request) {
-	products := c.Repository.GetProducts() // list of all products
-	// log.Println(products)
+	products := c.Repository.GetProducts()
 	data, _ := json.Marshal(products)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	setJSONHeader(w)
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(http.StatusOK)
 	w.Write(data)
@@ -115,7 +130,11 @@ func (c *Controller) AddProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	setJSONHeader(w)
 	w.WriteHeader(http.StatusCreated)
 	return
+}
+
+func setJSONHeader(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 }
