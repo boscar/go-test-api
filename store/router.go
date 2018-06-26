@@ -1,6 +1,7 @@
 package store
 
 import (
+	"go-test-api/config"
 	"log"
 	"net/http"
 
@@ -8,7 +9,7 @@ import (
 )
 
 // Imports
-var controller = &Controller{Repository: Repository{}}
+var controller Controller
 
 // Route defines a route
 type Route struct {
@@ -44,19 +45,28 @@ var routes = Routes{
 
 // More routes.....
 
-// NewRouter function configures a new router to the API
-func NewRouter() *mux.Router {
+// CreateRouter function configures a new router to the API
+func CreateRouter(configuration config.Configuration) *mux.Router {
+	controller = Controller{
+		Repository: Repository{
+			Config: configuration,
+		},
+	}
+
 	router := mux.NewRouter().StrictSlash(true)
+	initRoutes(router, routes)
+
+	return router
+}
+
+func initRoutes(router *mux.Router, routes []Route) {
 	for _, route := range routes {
-		var handler http.Handler
 		log.Println(route.Name)
-		handler = route.HandlerFunc
 
 		router.
 			Methods(route.Method).
 			Path(route.Pattern).
 			Name(route.Name).
-			Handler(handler)
+			Handler(route.HandlerFunc)
 	}
-	return router
 }

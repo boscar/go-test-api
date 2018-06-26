@@ -50,7 +50,7 @@ func AuthenticationMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	})
 }
 
-// Get Authentication token GET /
+//GetToken ... Get Authentication token GET /
 func (c *Controller) GetToken(w http.ResponseWriter, req *http.Request) {
 	var user User
 	_ = json.NewDecoder(req.Body).Decode(&user)
