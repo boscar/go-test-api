@@ -31,7 +31,7 @@ func main() {
 
 func setupConfiguration() config.Configuration {
 	configuration := config.Configuration{}
-	err := gonfig.GetConf("config/config.development.json", &configuration)
+	err := gonfig.GetConf("config/config.docker.json", &configuration)
 	if err != nil {
 		log.Fatal(err)
 	}

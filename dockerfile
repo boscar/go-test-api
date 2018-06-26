@@ -12,7 +12,5 @@ RUN go get github.com/gorilla/mux
 RUN go get gopkg.in/mgo.v2
 RUN go get github.com/boscar/go-test-api
 
-RUN go build 
-
 RUN go build -o main .
-CMD ["/app/main"]
+CMD ["/go-test-api/main"]

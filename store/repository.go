@@ -20,6 +20,7 @@ var productID = 10
 
 // GetProducts returns the list of Products
 func (r Repository) GetProducts() Products {
+	fmt.Println("Connecting to ", r.Config.ConnectionString)
 	session, err := mgo.Dial(r.Config.ConnectionString)
 
 	if err != nil {

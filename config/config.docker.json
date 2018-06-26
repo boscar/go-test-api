@@ -1,0 +1,5 @@
+{
+    "Port": "8000",
+    "ConnectionString": "mongodb://172.17.0.1:27017",
+    "DatabaseName":"dummyStore"
+}
