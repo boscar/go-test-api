@@ -1,9 +1,10 @@
 package store
 
 import (
-	"go-test-api/config"
 	"log"
 	"net/http"
+
+	"github.com/boscar/go-test-api/config"
 
 	"github.com/gorilla/mux"
 )
