@@ -1,9 +1,8 @@
 package main
 
 import (
-	"go-test-api/store"
-
 	"github.com/boscar/go-test-api/config"
+	"github.com/boscar/go-test-api/store"
 
 	"log"
 	"net/http"

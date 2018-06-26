@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/boscar/go-test-api/config"
-
 	"github.com/gorilla/mux"
 )
 
