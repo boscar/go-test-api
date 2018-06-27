@@ -1,10 +1,11 @@
 package main
 
 import (
-	"go-test-api/config"
-	"go-test-api/store"
 	"log"
 	"net/http"
+
+	"github.com/boscar/go-test-api/config"
+	"github.com/boscar/go-test-api/store"
 
 	"github.com/gorilla/handlers"
 	"github.com/tkanos/gonfig"

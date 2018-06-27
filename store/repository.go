@@ -3,9 +3,10 @@ package store
 import (
 	"crypto/tls"
 	"fmt"
-	"go-test-api/config"
 	"net"
 	"time"
+
+	"github.com/boscar/go-test-api/config"
 
 	mgo "gopkg.in/mgo.v2"
 )
