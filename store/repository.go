@@ -6,7 +6,7 @@ import (
 	"net"
 	"time"
 
-	"go-test-api/config"
+	"github.com/boscar/go-test-api/config"
 
 	mgo "gopkg.in/mgo.v2"
 )

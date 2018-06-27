@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"go-test-api/config"
-	"go-test-api/store"
+	"github.com/boscar/go-test-api/config"
+	"github.com/boscar/go-test-api/store"
 
 	"github.com/gorilla/handlers"
 	"github.com/tkanos/gonfig"
