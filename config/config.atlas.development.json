@@ -2,7 +2,11 @@
     "Port": "8000",
     "ConnectionString": "mongodb+srv://go-test-api-service:UFZnTPV070icINLS@test-go-api-cluster-3yqpk.mongodb.net",
     "DatabaseName":"dummyStore",
-    "UserName":"go-test-api-service",
+    "Hosts":[
+        "test-go-api-cluster-shard-00-01-3yqpk.mongodb.net:27017",
+        "test-go-api-cluster-shard-00-00-3yqpk.mongodb.net:27017",
+        "test-go-api-cluster-shard-00-02-3yqpk.mongodb.net:27017"
+    ],
     "Password": "UFZnTPV070icINLS",
     "DBUser":"go-test-api-service"
 }

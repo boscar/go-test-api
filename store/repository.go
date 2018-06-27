@@ -70,14 +70,8 @@ func (r Repository) AddProduct(product Product) bool {
 func connectToServer(config config.Configuration) (*mgo.Session, error) {
 	tlsConfig := &tls.Config{}
 
-	hosts := []string{
-		"test-go-api-cluster-shard-00-01-3yqpk.mongodb.net:27017",
-		"test-go-api-cluster-shard-00-00-3yqpk.mongodb.net:27017",
-		"test-go-api-cluster-shard-00-02-3yqpk.mongodb.net:27017",
-	}
-
 	dialInfo := &mgo.DialInfo{
-		Addrs:    hosts,
+		Addrs:    config.Hosts,
 		Timeout:  30 * time.Second,
 		Username: config.DBUser,
 		Password: config.Password,
