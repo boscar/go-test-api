@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/boscar/go-test-api/config"
+	"go-test-api/config"
 
 	"github.com/gorilla/mux"
 )
