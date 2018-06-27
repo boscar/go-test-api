@@ -1,0 +1,8 @@
+{
+    "Port": "8000",
+    "ConnectionString": "mongodb+srv://go-test-api-service:UFZnTPV070icINLS@test-go-api-cluster-3yqpk.mongodb.net",
+    "DatabaseName":"dummyStore",
+    "UserName":"go-test-api-service",
+    "Password": "UFZnTPV070icINLS",
+    "DBUser":"go-test-api-service"
+}

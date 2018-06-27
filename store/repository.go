@@ -1,9 +1,11 @@
 package store
 
 import (
+	"crypto/tls"
 	"fmt"
-
-	"github.com/boscar/go-test-api/config"
+	"go-test-api/config"
+	"net"
+	"time"
 
 	mgo "gopkg.in/mgo.v2"
 )
@@ -20,11 +22,10 @@ var productID = 10
 
 // GetProducts returns the list of Products
 func (r Repository) GetProducts() Products {
-	fmt.Println("Connecting to ", r.Config.ConnectionString)
-	session, err := mgo.Dial(r.Config.ConnectionString)
+	session, err := connectToServer(r.Config)
 
 	if err != nil {
-		fmt.Println("Failed to establish connection to Mongo server:", err)
+		fmt.Println("Failed to establish connection to Mongo server:", err.Error())
 		return nil
 	}
 
@@ -43,7 +44,7 @@ func (r Repository) GetProducts() Products {
 
 // AddProduct adds a Product in the DB
 func (r Repository) AddProduct(product Product) bool {
-	session, err := mgo.Dial(r.Config.ConnectionString)
+	session, err := connectToServer(r.Config)
 
 	if err != nil {
 		fmt.Println("Failed to establish connection to Mongo server:", err)
@@ -64,4 +65,28 @@ func (r Repository) AddProduct(product Product) bool {
 	fmt.Println("Added New Product ID- ", product.ID)
 
 	return true
+}
+
+func connectToServer(config config.Configuration) (*mgo.Session, error) {
+	tlsConfig := &tls.Config{}
+
+	hosts := []string{
+		"test-go-api-cluster-shard-00-01-3yqpk.mongodb.net:27017",
+		"test-go-api-cluster-shard-00-00-3yqpk.mongodb.net:27017",
+		"test-go-api-cluster-shard-00-02-3yqpk.mongodb.net:27017",
+	}
+
+	dialInfo := &mgo.DialInfo{
+		Addrs:    hosts,
+		Timeout:  30 * time.Second,
+		Username: config.DBUser,
+		Password: config.Password,
+	}
+
+	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+		conn, err := tls.Dial("tcp", addr.String(), tlsConfig)
+		return conn, err
+	}
+
+	return mgo.DialWithInfo(dialInfo)
 }

@@ -1,9 +1,8 @@
 package main
 
 import (
-	"github.com/boscar/go-test-api/config"
-	"github.com/boscar/go-test-api/store"
-
+	"go-test-api/config"
+	"go-test-api/store"
 	"log"
 	"net/http"
 
@@ -31,7 +30,7 @@ func main() {
 
 func setupConfiguration() config.Configuration {
 	configuration := config.Configuration{}
-	err := gonfig.GetConf("config/config.docker.json", &configuration)
+	err := gonfig.GetConf("config/config.atlas.development.json", &configuration)
 	if err != nil {
 		log.Fatal(err)
 	}
